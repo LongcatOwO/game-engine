@@ -34,3 +34,19 @@
 #else
 #   define PL_ASSERT(...) if !consteval { assert(__VA_ARGS__); }
 #endif
+
+
+#define PL_DECLARE_ERROR_TYPE(parent, type, display_name) \
+class type : public SuberrorType<parent> \
+{ \
+public: \
+    using SuberrorType<parent>::SuberrorType; \
+    constexpr char const *name() const noexcept final \
+    { \
+        return display_name; \
+    } \
+}
+
+#define PL_DEFER(...) PL_DEFER_HELPER_0(__COUNTER__, __VA_ARGS__)
+#define PL_DEFER_HELPER_0(counter, ...) PL_DEFER_HELPER_1(counter, __VA_ARGS__)
+#define PL_DEFER_HELPER_1(counter, ...) ::pl::Defer pl_Defer_##counter{[&]{__VA_ARGS__;}}

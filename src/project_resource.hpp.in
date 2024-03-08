@@ -1,0 +1,2 @@
+#pragma once
+#cmakedefine PL_RESOURCE_DIR "@PL_RESOURCE_DIR@"

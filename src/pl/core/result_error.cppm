@@ -797,6 +797,7 @@ private:
         [[no_unique_address]] tags::none_t                   none;
         [[no_unique_address]] traits::none_if_void_t<Result> result;
         [[no_unique_address]] traits::none_if_void_t<Error>  error;
+        constexpr ~U() {}
     };
 
     [[no_unique_address]] U _u;

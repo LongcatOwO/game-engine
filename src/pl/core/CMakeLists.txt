@@ -4,7 +4,9 @@ PUBLIC FILE_SET CXX_MODULES FILES
     array.cppm
     array_list.cppm
     concepts.cppm
+    defer.cppm
     error.cppm
+    handle.cppm
     iterator.cppm
     memory.cppm
     null.cppm

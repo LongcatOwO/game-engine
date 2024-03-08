@@ -424,3 +424,24 @@ static_assert(std::contiguous_iterator<const_iterator<ArrayIterator<int, 5>>>);
 static_assert(std::random_access_iterator<std::reverse_iterator<ArrayIterator<int, 5>>>);
 static_assert(std::random_access_iterator<std::reverse_iterator<const_iterator<ArrayIterator<int, 5>>>>);
 } // namespace pl
+
+export namespace pl
+{
+template<class T, std::size_t N>
+constexpr Array<std::remove_cv_t<T>, N> makeArray(T (&arr)[N])
+{
+    return [&]<std::size_t ...Is>(std::index_sequence<Is...>) -> Array<std::remove_cv_t<T>, N>
+    {
+        return {{arr[Is]...}};
+    } (std::make_index_sequence<N>{});
+}
+
+template<class T, std::size_t N>
+constexpr Array<std::remove_cv_t<T>, N> makeArray(T (&&arr)[N])
+{
+    return [&]<std::size_t ...Is>(std::index_sequence<Is...>) -> Array<std::remove_cv_t<T>, N>
+    {
+        return {{std::move(arr[Is])...}};
+    } (std::make_index_sequence<N>{});
+}
+} // export namespace pl

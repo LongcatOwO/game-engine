@@ -149,7 +149,10 @@ class Mallocator
 {
 public:
     [[nodiscard]] 
-    static RE<Ptr<void>, SimpleError> alloc(NonZero<std::size_t> size, NonZero<std::size_t> alignment) noexcept
+    static RE<Ptr<void>, SimpleError> alloc(
+                         NonZero<std::size_t> size,
+        [[maybe_unused]] NonZero<std::size_t> alignment)
+        noexcept
     {
         assert(alignment <= alignof(std::max_align_t) && isValidAlignment(alignment));
         if (void *memory = std::malloc(size); memory)
@@ -158,7 +161,11 @@ public:
             return {tags::error, getSingleton<BadMalloc>()};
     }
 
-    static void free(Ptr<void> memory, NonZero<std::size_t> size, NonZero<std::size_t> alignment) noexcept
+    static void free(
+                         Ptr<void> memory,
+                         NonZero<std::size_t> size,
+        [[maybe_unused]] NonZero<std::size_t> alignment)
+        noexcept
     {
         (void) size;
         assert(alignment <= alignof(std::max_align_t) && isValidAlignment(alignment));

@@ -14,6 +14,7 @@ export module pl.core:array_list;
 import :error;
 import :iterator;
 import :memory;
+import :null;
 import :result_error;
 import :span;
 
@@ -39,7 +40,9 @@ public:
     ArrayListIterator           (ArrayListIterator const &) = default;
     ArrayListIterator &operator=(ArrayListIterator const &) = default;
 
+#ifndef NDEBUG
     template<class A>
+#endif
     constexpr ArrayListIterator(
         T *p
 #ifndef NDEBUG
@@ -188,6 +191,7 @@ public:
     noexcept(std::is_nothrow_copy_assignable_v<A>)
     {
         _arr = std::exchange(other._arr, {});
+        _end = std::exchange(other._end, {});
         _allocator = other._allocator;
         return *this;
     }
@@ -426,6 +430,37 @@ public:
     {
         PL_ASSERT(!empty());
         std::destroy_at(--_end);
+    }
+
+    constexpr RE<void, SimpleError> resize(size_type count) noexcept
+    {
+        namespace rng = std::ranges;
+
+        PL_TRY_DISCARD(reserve_capacity(count));
+        size_type old_size = size();
+        iterator old_end = end();
+        if (count < old_size)
+        {
+            iterator new_end = old_end - static_cast<difference_type>(old_size - count);
+            rng::destroy(new_end, old_end);
+            _end = std::to_address(new_end);
+        }
+        else
+        {
+            iterator new_end = old_end + static_cast<difference_type>(count - old_size);
+            if consteval
+            {
+                for (; old_end != new_end; ++old_end)
+                    default_construct_at(makeNonNull_Unchecked(std::to_address(old_end)));
+            }
+            else
+            {
+                rng::uninitialized_default_construct(old_end, new_end);
+            }
+            _end = std::to_address(new_end);
+        }
+
+        return {};
     }
 
     constexpr void swap(ArrayList &other)

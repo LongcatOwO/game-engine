@@ -162,12 +162,18 @@ link_libraries(
     VulkanHppModule
 )
 
+set(PL_RESOURCE_DIR "${CMAKE_CURRENT_BINARY_DIR}/res")
+configure_file("src/project_resource.hpp.in" "src/project_resource.hpp")
+
+include_directories("${CMAKE_CURRENT_BINARY_DIR}/src")
+
 include_directories(src)
 
 add_executable("${PROJECT_NAME}")
 add_subdirectory(src)
 
-
 include_directories(test)
 
 add_subdirectory(test)
+
+add_subdirectory(res)

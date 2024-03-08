@@ -165,6 +165,7 @@ private:
             return tags::none;
     }
 
+#ifndef NDEBUG
     constexpr std::size_t size() const noexcept
     {
         if constexpr (Extent == tags::dynamic_extent)
@@ -173,7 +174,6 @@ private:
             return Extent;
     }
 
-#ifndef NDEBUG
     constexpr bool isOffsetInValidRange(difference_type d) const noexcept
     {
         auto new_index = _p - _begin + d;

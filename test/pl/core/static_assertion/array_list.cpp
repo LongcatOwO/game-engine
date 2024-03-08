@@ -213,5 +213,23 @@ PL_STATIC_ASSERTION_TEST(test_assign_03)
 
     static_assert(result == 45);
 }
+
+PL_STATIC_ASSERTION_TEST(test_move)
+{
+    constexpr auto result = []
+    {
+        ArrayList<unsigned> arr;
+        {
+            ArrayList<unsigned> arr2;
+            int arr3[] = {3, 6, 2, 5, 8};
+            (void) arr2.append(std::begin(arr3), std::end(arr3));
+            arr = std::move(arr2);
+        }
+
+        return std::accumulate(arr.begin(), arr.end(), 0);
+    }();
+
+    static_assert(result == 24);
+}
 } // namespace
 } // namespace pl_test
